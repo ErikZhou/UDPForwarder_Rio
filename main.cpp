@@ -1,5 +1,9 @@
 #include <conio.h>
 #include <stdio.h>
+#include <string>
+#include <chrono>
+#include <iostream>
+#include <thread>
 #include "deps/Argtable3/argtable3.h"
 #include "deps/RioSockets/Source/riosockets.h"
 
@@ -13,7 +17,7 @@
 // lower values reduce latency, higher values increase performance
 #define RECEIVE_SENDER_PACKET_BUFFER 256
 // size of a single packet
-#define MAX_BUFFER_LENGTH 1024
+#define MAX_BUFFER_LENGTH 1024 //1024
 // memory reserved for send buffer in multicast mode
 #define SEND_BUFFER_SIZE (MAX_QUEUE_LENGTH * MAX_BUFFER_LENGTH)
 // memory reserved for receive buffer in multicast mode
@@ -36,7 +40,7 @@ int riosockets_address_set_ip_port(RioAddress* dstAddress,
                                    const char* hostPort) {
   char hostAddr[INET6_ADDRSTRLEN];
   if (hostPort != NULL) {
-    char* ptr = strrchr(hostPort, ':');
+    char* ptr = strrchr((char*)hostPort, ':');
     if (!ptr) {
       strncpy_s(hostAddr, INET6_ADDRSTRLEN, hostPort, strlen(hostPort));
       dstAddress->port = 0;
@@ -140,6 +144,7 @@ void server_callback(RioSocket server, const RioAddress* address,
 void client_callback(RioSocket client, const RioAddress* address,
                      const uint8_t* data, int dataLength, RioType type) {
   // ignore message when message is received, client is write only - no reads
+  printf("data length=%d,\tdata:%s\n", dataLength, data);
 }
 #pragma clang diagnostic pop
 
@@ -218,12 +223,14 @@ int sender_mode(void) {
     uint8_t* buffer = riosockets_buffer(client, NULL, MAX_BUFFER_LENGTH);
     memset(buffer, 0, MAX_BUFFER_LENGTH);
 
-    //std::string msg = "message for client No." + std::to_string(index++);
-    //    memcpy_s(buffer, msg.length(), msg.c_str(), msg.length());
+    std::string msg = "message for client No." + std::to_string(index++);
+        memcpy_s(buffer, msg.length(), msg.c_str(), msg.length());
     queueSize += 1;
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (queueSize >= SENDER_PACKET_BUFFER) {
 #if defined(_DEBUG)
-      printf("Flushing send queue (size=%d)\n", queueSize);
+      //printf("Flushing send queue (size=%d)\n", queueSize);
+      printf("sent from client data length=%d,\tdata:%s\n", msg.length(), msg.c_str());
 #endif
       riosockets_send(client);
       queueSize = 0;
