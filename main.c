@@ -1,9 +1,9 @@
 #include <conio.h>
 #include <stdio.h>
-
 #include "deps/Argtable3/argtable3.h"
 #include "deps/RioSockets/Source/riosockets.h"
 
+//#include <string>
 #define UDP_FORWARDER_VERSION "1.0.0"
 #define MAX_QUEUE_LENGTH 256
 // must be lower than MAX_QUEUE_LENGTH
@@ -213,9 +213,13 @@ int sender_mode(void) {
          client_address.port);
 
   unsigned int queueSize = 0;
+  unsigned int index = 0;
   while (!_kbhit()) {
     uint8_t* buffer = riosockets_buffer(client, NULL, MAX_BUFFER_LENGTH);
     memset(buffer, 0, MAX_BUFFER_LENGTH);
+
+    //std::string msg = "message for client No." + std::to_string(index++);
+    //    memcpy_s(buffer, msg.length(), msg.c_str(), msg.length());
     queueSize += 1;
     if (queueSize >= SENDER_PACKET_BUFFER) {
 #if defined(_DEBUG)
