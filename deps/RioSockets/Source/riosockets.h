@@ -3,22 +3,22 @@
  *  Copyright (c) 2020 Stanislav Denisov
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
+ *  of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ *  The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  */
 
 #ifndef RIOSOCKETS_H
@@ -34,11 +34,11 @@
 #define RIOSOCKETS_CALLBACK __cdecl
 
 #ifdef RIOSOCKETS_DLL
-	#ifdef RIOSOCKETS_IMPLEMENTATION
-		#define RIOSOCKETS_API __declspec(dllexport)
-	#else
-		#define RIOSOCKETS_API __declspec(dllimport)
-	#endif
+#ifdef RIOSOCKETS_IMPLEMENTATION
+#define RIOSOCKETS_API __declspec(dllexport)
+#else
+#define RIOSOCKETS_API __declspec(dllimport)
+#endif
 #endif
 
 #define RIOSOCKETS_HOSTNAME_SIZE 1025
@@ -50,681 +50,765 @@
 extern "C" {
 #endif
 
-	typedef intptr_t RioSocket;
+typedef intptr_t RioSocket;
 
-	typedef enum _RioStatus {
-		RIOSOCKETS_STATUS_OK = 0,
-		RIOSOCKETS_STATUS_ERROR = -1
-	} RioStatus;
+typedef enum _RioStatus {
+  RIOSOCKETS_STATUS_OK = 0,
+  RIOSOCKETS_STATUS_ERROR = -1
+} RioStatus;
 
-	typedef enum _RioType {
-		RIOSOCKETS_TYPE_SEND = 0,
-		RIOSOCKETS_TYPE_RECEIVE = 1
-	} RioType;
+typedef enum _RioType {
+  RIOSOCKETS_TYPE_SEND = 0,
+  RIOSOCKETS_TYPE_RECEIVE = 1
+} RioType;
 
-	typedef enum _RioError {
-		RIOSOCKETS_ERROR_NONE = 0,
-		RIOSOCKETS_ERROR_SOCKET_CREATION = 1,
-		RIOSOCKETS_ERROR_SOCKET_DUAL_STACK = 2,
-		RIOSOCKETS_ERROR_RIO_EXTENSION = 3,
-		RIOSOCKETS_ERROR_RIO_BUFFER_SIZE = 4,
-		RIOSOCKETS_ERROR_RIO_EVENT = 5,
-		RIOSOCKETS_ERROR_RIO_COMPLETION_QUEUE = 6,
-		RIOSOCKETS_ERROR_RIO_REQUEST_QUEUE = 7,
-		RIOSOCKETS_ERROR_RIO_BUFFER_CREATION = 8,
-		RIOSOCKETS_ERROR_RIO_BUFFER_REGISTRATION = 9,
-		RIOSOCKETS_ERROR_RIO_BUFFER_ASSOCIATION = 10
-	} RioError;
+typedef enum _RioError {
+  RIOSOCKETS_ERROR_NONE = 0,
+  RIOSOCKETS_ERROR_SOCKET_CREATION = 1,
+  RIOSOCKETS_ERROR_SOCKET_DUAL_STACK = 2,
+  RIOSOCKETS_ERROR_RIO_EXTENSION = 3,
+  RIOSOCKETS_ERROR_RIO_BUFFER_SIZE = 4,
+  RIOSOCKETS_ERROR_RIO_EVENT = 5,
+  RIOSOCKETS_ERROR_RIO_COMPLETION_QUEUE = 6,
+  RIOSOCKETS_ERROR_RIO_REQUEST_QUEUE = 7,
+  RIOSOCKETS_ERROR_RIO_BUFFER_CREATION = 8,
+  RIOSOCKETS_ERROR_RIO_BUFFER_REGISTRATION = 9,
+  RIOSOCKETS_ERROR_RIO_BUFFER_ASSOCIATION = 10
+} RioError;
 
-	typedef struct _RioAddress {
-		union {
-			struct in6_addr ipv6;
-			struct {
-				uint8_t zeros[10];
-				uint16_t ffff;
-				struct in_addr ip;
-			} ipv4;
-		};
-		uint16_t port;
-	} RioAddress;
+typedef struct _RioAddress {
+  union {
+    struct in6_addr ipv6;
+    struct {
+      uint8_t zeros[10];
+      uint16_t ffff;
+      struct in_addr ip;
+    } ipv4;
+  };
+  uint16_t port;
+} RioAddress;
 
-	typedef void (RIOSOCKETS_CALLBACK *RioCallback)(RioSocket, const RioAddress*, const uint8_t*, int, RioType);
+typedef void(RIOSOCKETS_CALLBACK* RioCallback)(RioSocket, const RioAddress*,
+                                               const uint8_t*, int, RioType);
 
-	RIOSOCKETS_API RioStatus riosockets_initialize(void);
+RIOSOCKETS_API RioStatus riosockets_initialize(void);
 
-	RIOSOCKETS_API void riosockets_deinitialize(void);
+RIOSOCKETS_API void riosockets_deinitialize(void);
 
-	RIOSOCKETS_API RioSocket riosockets_create(int, int, int, RioCallback, RioError*);
+RIOSOCKETS_API RioSocket riosockets_create(int, int, int, RioCallback,
+                                           RioError*);
 
-	RIOSOCKETS_API void riosockets_destroy(RioSocket*);
+RIOSOCKETS_API void riosockets_destroy(RioSocket*);
 
-	RIOSOCKETS_API int riosockets_bind(RioSocket, const RioAddress*);
+RIOSOCKETS_API int riosockets_bind(RioSocket, const RioAddress*);
 
-	RIOSOCKETS_API int riosockets_connect(RioSocket, const RioAddress*);
+RIOSOCKETS_API int riosockets_connect(RioSocket, const RioAddress*);
 
-	RIOSOCKETS_API RioStatus riosockets_set_option(RioSocket, int, int, const int*, int);
+RIOSOCKETS_API RioStatus riosockets_set_option(RioSocket, int, int, const int*,
+                                               int);
 
-	RIOSOCKETS_API RioStatus riosockets_get_option(RioSocket, int, int, int*, int*);
+RIOSOCKETS_API RioStatus riosockets_get_option(RioSocket, int, int, int*, int*);
 
-	RIOSOCKETS_API uint8_t* riosockets_buffer(RioSocket, const RioAddress*, int);
+RIOSOCKETS_API uint8_t* riosockets_buffer(RioSocket, const RioAddress*, int);
 
-	RIOSOCKETS_API void riosockets_send(RioSocket);
+RIOSOCKETS_API void riosockets_send(RioSocket);
 
-	RIOSOCKETS_API void riosockets_receive(RioSocket, int);
+RIOSOCKETS_API void riosockets_receive(RioSocket, int);
 
-	RIOSOCKETS_API RioStatus riosockets_address_get(RioSocket, RioAddress*);
+RIOSOCKETS_API RioStatus riosockets_address_get(RioSocket, RioAddress*);
 
-	RIOSOCKETS_API RioStatus riosockets_address_is_equal(const RioAddress*, const RioAddress*);
+RIOSOCKETS_API RioStatus riosockets_address_is_equal(const RioAddress*,
+                                                     const RioAddress*);
 
-	RIOSOCKETS_API RioStatus riosockets_address_set_ip(RioAddress*, const char*);
+RIOSOCKETS_API RioStatus riosockets_address_set_ip(RioAddress*, const char*);
 
-	RIOSOCKETS_API RioStatus riosockets_address_get_ip(const RioAddress*, char*, int);
+RIOSOCKETS_API RioStatus riosockets_address_get_ip(const RioAddress*, char*,
+                                                   int);
 
-	RIOSOCKETS_API RioStatus riosockets_address_set_hostname(RioAddress*, const char*);
+RIOSOCKETS_API RioStatus riosockets_address_set_hostname(RioAddress*,
+                                                         const char*);
 
-	RIOSOCKETS_API RioStatus riosockets_address_get_hostname(const RioAddress*, char*, int);
+RIOSOCKETS_API RioStatus riosockets_address_get_hostname(const RioAddress*,
+                                                         char*, int);
 
 #ifdef __cplusplus
 }
 #endif
 
-#if defined(RIOSOCKETS_IMPLEMENTATION) && !defined(RIOSOCKETS_IMPLEMENTATION_DONE)
-	#define RIOSOCKETS_IMPLEMENTATION_DONE 1
-
-	#include <string.h>
-	#include <versionhelpers.h>
-	#include <mswsock.h>
-
-	#ifdef __MINGW32__
-		#include "mingw/rio.h"
-	#endif
-
-	typedef struct _RioBuffer {
-		RIO_BUF data;
-		RIO_BUF address;
-		BOOL addressless;
-	} RioBuffer;
-
-	typedef struct _Rio {
-		RIO_EXTENSION_FUNCTION_TABLE functions;
-		RIO_CQ sendQueue;
-		RIO_CQ receiveQueue;
-		RIO_RQ requestQueue;
-		WSAEVENT sendEvent;
-		WSAEVENT receiveEvent;
-		SOCKET socket;
-		RIORESULT* sendCompletionResults;
-		RIORESULT* receiveCompletionResults;
-		char* sendMemory;
-		char* sendMemoryAddress;
-		char* receiveMemory;
-		char* receiveMemoryAddress;
-		RioBuffer* sendBuffers;
-		RioBuffer* receiveBuffers;
-		RioCallback callback;
-		int maxBufferLength;
-		int sendBufferCount;
-		int sendBufferQueue;
-		int sendBufferTail;
-		int sendBufferPending;
-		int receiveBufferCount;
-		int receiveBufferHead;
-	} Rio;
-
-	// Macros
-
-	#define RIOSOCKETS_HOST_TO_NET_16(value) (htons(value))
-	#define RIOSOCKETS_HOST_TO_NET_32(value) (htonl(value))
-	#define RIOSOCKETS_NET_TO_HOST_16(value) (ntohs(value))
-	#define RIOSOCKETS_NET_TO_HOST_32(value) (ntohl(value))
-
-	// Functions
-
-	inline static uint64_t riosockets_round_and_divide(uint64_t value, uint64_t roundTo) {
-		return ((value + roundTo - 1) / roundTo);
-	}
+#if defined(RIOSOCKETS_IMPLEMENTATION) && \
+    !defined(RIOSOCKETS_IMPLEMENTATION_DONE)
+#define RIOSOCKETS_IMPLEMENTATION_DONE 1
+
+#include <string.h>
+#include <versionhelpers.h>
+#include <mswsock.h>
+
+#ifdef __MINGW32__
+#include "mingw/rio.h"
+#endif
+
+typedef struct _RioBuffer {
+  RIO_BUF data;
+  RIO_BUF address;
+  BOOL addressless;
+} RioBuffer;
+
+typedef struct _Rio {
+  RIO_EXTENSION_FUNCTION_TABLE functions;
+  RIO_CQ sendQueue;
+  RIO_CQ receiveQueue;
+  RIO_RQ requestQueue;
+  WSAEVENT sendEvent;
+  WSAEVENT receiveEvent;
+  SOCKET socket;
+  RIORESULT* sendCompletionResults;
+  RIORESULT* receiveCompletionResults;
+  char* sendMemory;
+  char* sendMemoryAddress;
+  char* receiveMemory;
+  char* receiveMemoryAddress;
+  RioBuffer* sendBuffers;
+  RioBuffer* receiveBuffers;
+  RioCallback callback;
+  int maxBufferLength;
+  int sendBufferCount;
+  int sendBufferQueue;
+  int sendBufferTail;
+  int sendBufferPending;
+  int receiveBufferCount;
+  int receiveBufferHead;
+} Rio;
+
+// Macros
+
+#define RIOSOCKETS_HOST_TO_NET_16(value) (htons(value))
+#define RIOSOCKETS_HOST_TO_NET_32(value) (htonl(value))
+#define RIOSOCKETS_NET_TO_HOST_16(value) (ntohs(value))
+#define RIOSOCKETS_NET_TO_HOST_32(value) (ntohl(value))
+
+// Functions
+
+inline static uint64_t riosockets_round_and_divide(uint64_t value,
+                                                   uint64_t roundTo) {
+  return ((value + roundTo - 1) / roundTo);
+}
+
+inline static uint64_t riosockets_round_up(uint64_t value, uint64_t roundTo) {
+  return riosockets_round_and_divide(value, roundTo) * roundTo;
+}
+
+inline static int riosockets_array_is_zeroed(const uint8_t* array, int length) {
+  for (size_t i = 0; i < length; i++) {
+    if (array[i] != 0) return -1;
+  }
+
+  return 0;
+}
+
+inline static void riosockets_address_extract(
+    RioAddress* address, const struct sockaddr_storage* source) {
+  if (source->ss_family == AF_INET) {
+    struct sockaddr_in* socketAddress = (struct sockaddr_in*)source;
+
+    memset(address, 0, sizeof(address->ipv4.zeros));
+
+    address->ipv4.ffff = 0xFFFF;
+    address->ipv4.ip = socketAddress->sin_addr;
+    address->port = RIOSOCKETS_NET_TO_HOST_16(socketAddress->sin_port);
+  } else if (source->ss_family == AF_INET6) {
+    struct sockaddr_in6* socketAddress = (struct sockaddr_in6*)source;
+
+    address->ipv6 = socketAddress->sin6_addr;
+    address->port = RIOSOCKETS_NET_TO_HOST_16(socketAddress->sin6_port);
+  }
+}
 
-	inline static uint64_t riosockets_round_up(uint64_t value, uint64_t roundTo) {
-		return riosockets_round_and_divide(value, roundTo) * roundTo;
-	}
+static char* riosockets_buffer_allocate(uint64_t bufferLength,
+                                        uint64_t bufferCount) {
+  SYSTEM_INFO systemInfo = {0};
 
-	inline static int riosockets_array_is_zeroed(const uint8_t* array, int length) {
-		for (size_t i = 0; i < length; i++) {
-			if (array[i] != 0)
-				return -1;
-		}
+  GetSystemInfo(&systemInfo);
 
-		return 0;
-	}
+  return VirtualAlloc(
+      NULL,
+      riosockets_round_up(bufferLength * bufferCount, systemInfo.dwPageSize),
+      MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+}
 
-	inline static void riosockets_address_extract(RioAddress* address, const struct sockaddr_storage* source) {
-		if (source->ss_family == AF_INET) {
-			struct sockaddr_in* socketAddress = (struct sockaddr_in*)source;
+static void riosockets_buffer_free(char* buffer) {
+  if (buffer != NULL) VirtualFree(buffer, 0, MEM_RELEASE);
+}
 
-			memset(address, 0, sizeof(address->ipv4.zeros));
+RioStatus riosockets_initialize(void) {
+  WSADATA wsaData = {0};
 
-			address->ipv4.ffff = 0xFFFF;
-			address->ipv4.ip = socketAddress->sin_addr;
-			address->port = RIOSOCKETS_NET_TO_HOST_16(socketAddress->sin_port);
-		} else if (source->ss_family == AF_INET6) {
-			struct sockaddr_in6* socketAddress = (struct sockaddr_in6*)source;
+  if (WSAStartup(MAKEWORD(2, 2), &wsaData)) return RIOSOCKETS_STATUS_ERROR;
 
-			address->ipv6 = socketAddress->sin6_addr;
-			address->port = RIOSOCKETS_NET_TO_HOST_16(socketAddress->sin6_port);
-		}
-	}
+  if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2 ||
+      !IsWindows8OrGreater()) {
+    WSACleanup();
 
-	static char* riosockets_buffer_allocate(uint64_t bufferLength, uint64_t bufferCount) {
-		SYSTEM_INFO systemInfo = { 0 };
+    return RIOSOCKETS_STATUS_ERROR;
+  }
 
-		GetSystemInfo(&systemInfo);
+  return RIOSOCKETS_STATUS_OK;
+}
 
-		return VirtualAlloc(NULL, riosockets_round_up(bufferLength * bufferCount, systemInfo.dwPageSize), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-	}
+void riosockets_deinitialize(void) { WSACleanup(); }
 
-	static void riosockets_buffer_free(char* buffer) {
-		if (buffer != NULL)
-			VirtualFree(buffer, 0, MEM_RELEASE);
-	}
+RioSocket riosockets_create(int maxBufferLength, int sendBufferSize,
+                            int receiveBufferSize, RioCallback callback,
+                            RioError* error) {
+  Rio* rio = NULL;
 
-	RioStatus riosockets_initialize(void) {
-		WSADATA wsaData = { 0 };
+  if (callback == NULL || error == NULL) return -1;
 
-		if (WSAStartup(MAKEWORD(2, 2), &wsaData))
-			return RIOSOCKETS_STATUS_ERROR;
+  SOCKET socket =
+      WSASocketW(PF_INET6, SOCK_DGRAM, 0, NULL, 0, WSA_FLAG_REGISTERED_IO);
 
-		if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2 || !IsWindows8OrGreater()) {
-			WSACleanup();
+  if (socket != INVALID_SOCKET) {
+    int onlyIPv6 = 0;
 
-			return RIOSOCKETS_STATUS_ERROR;
-		}
+    if (setsockopt(socket, IPPROTO_IPV6, IPV6_V6ONLY, (const char*)&onlyIPv6,
+                   sizeof(onlyIPv6)) != 0) {
+      closesocket(socket);
 
-		return RIOSOCKETS_STATUS_OK;
-	}
+      *error = RIOSOCKETS_ERROR_SOCKET_DUAL_STACK;
 
-	void riosockets_deinitialize(void) {
-		WSACleanup();
-	}
+      return -1;
+    }
 
-	RioSocket riosockets_create(int maxBufferLength, int sendBufferSize, int receiveBufferSize, RioCallback callback, RioError* error) {
-		Rio* rio = NULL;
+    rio = (Rio*)calloc(1, sizeof(Rio));
 
-		if (callback == NULL || error == NULL)
-			return -1;
+    rio->socket = socket;
+    rio->maxBufferLength = maxBufferLength;
+    rio->callback = callback;
 
-		SOCKET socket = WSASocketW(PF_INET6, SOCK_DGRAM, 0, NULL, 0, WSA_FLAG_REGISTERED_IO);
+    GUID functionTableID = WSAID_MULTIPLE_RIO;
+    DWORD outBytes = 0;
 
-		if (socket != INVALID_SOCKET) {
-			int onlyIPv6 = 0;
+    if (WSAIoctl(socket, SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER,
+                 &functionTableID, sizeof(functionTableID),
+                 (void**)&rio->functions, sizeof(rio->functions), &outBytes, 0,
+                 0) != 0) {
+      *error = RIOSOCKETS_ERROR_RIO_EXTENSION;
 
-			if (setsockopt(socket, IPPROTO_IPV6, IPV6_V6ONLY, (const char*)&onlyIPv6, sizeof(onlyIPv6)) != 0) {
-				closesocket(socket);
+      goto destroy;
+    }
 
-				*error = RIOSOCKETS_ERROR_SOCKET_DUAL_STACK;
+    if (sendBufferSize < rio->maxBufferLength ||
+        receiveBufferSize < rio->maxBufferLength) {
+      *error = RIOSOCKETS_ERROR_RIO_BUFFER_SIZE;
 
-				return -1;
-			}
+      goto destroy;
+    }
 
-			rio = (Rio*)calloc(1, sizeof(Rio));
+    rio->sendBufferCount = sendBufferSize / rio->maxBufferLength;
+    rio->receiveBufferCount = receiveBufferSize / rio->maxBufferLength;
 
-			rio->socket = socket;
-			rio->maxBufferLength = maxBufferLength;
-			rio->callback = callback;
+    RIO_NOTIFICATION_COMPLETION sendQueue = {0};
 
-			GUID functionTableID = WSAID_MULTIPLE_RIO;
-			DWORD outBytes = 0;
+    rio->sendEvent = WSACreateEvent();
 
-			if (WSAIoctl(socket, SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER, &functionTableID, sizeof(functionTableID), (void**)&rio->functions, sizeof(rio->functions), &outBytes, 0, 0) != 0) {
-				*error = RIOSOCKETS_ERROR_RIO_EXTENSION;
+    if (rio->sendEvent == WSA_INVALID_EVENT) {
+      *error = RIOSOCKETS_ERROR_RIO_EVENT;
 
-				goto destroy;
-			}
+      goto destroy;
+    }
 
-			if (sendBufferSize < rio->maxBufferLength || receiveBufferSize < rio->maxBufferLength) {
-				*error = RIOSOCKETS_ERROR_RIO_BUFFER_SIZE;
+    rio->sendCompletionResults =
+        calloc(rio->sendBufferCount, sizeof(RIORESULT));
 
-				goto destroy;
-			}
+    sendQueue.Type = RIO_EVENT_COMPLETION;
+    sendQueue.Event.EventHandle = rio->sendEvent;
 
-			rio->sendBufferCount = sendBufferSize / rio->maxBufferLength;
-			rio->receiveBufferCount = receiveBufferSize / rio->maxBufferLength;
+    rio->sendQueue = rio->functions.RIOCreateCompletionQueue(
+        rio->sendBufferCount, &sendQueue);
 
-			RIO_NOTIFICATION_COMPLETION sendQueue = { 0 };
+    RIO_NOTIFICATION_COMPLETION receiveQueue = {0};
 
-			rio->sendEvent = WSACreateEvent();
+    rio->receiveEvent = WSACreateEvent();
 
-			if (rio->sendEvent == WSA_INVALID_EVENT) {
-				*error = RIOSOCKETS_ERROR_RIO_EVENT;
+    if (rio->receiveEvent == WSA_INVALID_EVENT) {
+      *error = RIOSOCKETS_ERROR_RIO_EVENT;
 
-				goto destroy;
-			}
+      goto destroy;
+    }
 
-			rio->sendCompletionResults = calloc(rio->sendBufferCount, sizeof(RIORESULT));
+    rio->receiveCompletionResults =
+        calloc(rio->receiveBufferCount, sizeof(RIORESULT));
 
-			sendQueue.Type = RIO_EVENT_COMPLETION;
-			sendQueue.Event.EventHandle = rio->sendEvent;
+    receiveQueue.Type = RIO_EVENT_COMPLETION;
+    receiveQueue.Event.EventHandle = rio->receiveEvent;
 
-			rio->sendQueue = rio->functions.RIOCreateCompletionQueue(rio->sendBufferCount, &sendQueue);
+    rio->receiveQueue = rio->functions.RIOCreateCompletionQueue(
+        rio->receiveBufferCount, &receiveQueue);
 
-			RIO_NOTIFICATION_COMPLETION receiveQueue = { 0 };
+    if (rio->sendQueue == RIO_INVALID_CQ ||
+        rio->receiveQueue == RIO_INVALID_CQ) {
+      *error = RIOSOCKETS_ERROR_RIO_COMPLETION_QUEUE;
 
-			rio->receiveEvent = WSACreateEvent();
+      goto destroy;
+    }
 
-			if (rio->receiveEvent == WSA_INVALID_EVENT) {
-				*error = RIOSOCKETS_ERROR_RIO_EVENT;
+    rio->requestQueue = rio->functions.RIOCreateRequestQueue(
+        socket, rio->receiveBufferCount, 1, rio->sendBufferCount, 1,
+        rio->receiveQueue, rio->sendQueue, 0);
 
-				goto destroy;
-			}
+    if (rio->requestQueue == RIO_INVALID_RQ) {
+      *error = RIOSOCKETS_ERROR_RIO_REQUEST_QUEUE;
 
-			rio->receiveCompletionResults = calloc(rio->receiveBufferCount, sizeof(RIORESULT));
+      goto destroy;
+    }
 
-			receiveQueue.Type = RIO_EVENT_COMPLETION;
-			receiveQueue.Event.EventHandle = rio->receiveEvent;
+    rio->sendMemory =
+        riosockets_buffer_allocate(rio->maxBufferLength, rio->sendBufferCount);
+    rio->sendMemoryAddress =
+        riosockets_buffer_allocate(sizeof(SOCKADDR_INET), rio->sendBufferCount);
 
-			rio->receiveQueue = rio->functions.RIOCreateCompletionQueue(rio->receiveBufferCount, &receiveQueue);
+    if (rio->sendMemory == NULL || rio->sendMemoryAddress == NULL) {
+      *error = RIOSOCKETS_ERROR_RIO_BUFFER_CREATION;
 
-			if (rio->sendQueue == RIO_INVALID_CQ || rio->receiveQueue == RIO_INVALID_CQ) {
-				*error = RIOSOCKETS_ERROR_RIO_COMPLETION_QUEUE;
+      goto destroy;
+    }
 
-				goto destroy;
-			}
+    RIO_BUFFERID sendBufferID = rio->functions.RIORegisterBuffer(
+        rio->sendMemory, rio->maxBufferLength * rio->sendBufferCount);
+    RIO_BUFFERID sendAddressBufferID = rio->functions.RIORegisterBuffer(
+        rio->sendMemoryAddress, rio->sendBufferCount * sizeof(SOCKADDR_INET));
 
-			rio->requestQueue = rio->functions.RIOCreateRequestQueue(socket, rio->receiveBufferCount, 1, rio->sendBufferCount, 1, rio->receiveQueue, rio->sendQueue, 0);
+    if (sendBufferID == RIO_INVALID_BUFFERID ||
+        sendAddressBufferID == RIO_INVALID_BUFFERID) {
+      *error = RIOSOCKETS_ERROR_RIO_BUFFER_REGISTRATION;
 
-			if (rio->requestQueue == RIO_INVALID_RQ) {
-				*error = RIOSOCKETS_ERROR_RIO_REQUEST_QUEUE;
+      goto destroy;
+    }
 
-				goto destroy;
-			}
+    rio->sendBuffers =
+        (RioBuffer*)calloc(rio->sendBufferCount, sizeof(RioBuffer));
 
-			rio->sendMemory = riosockets_buffer_allocate(rio->maxBufferLength, rio->sendBufferCount);
-			rio->sendMemoryAddress = riosockets_buffer_allocate(sizeof(SOCKADDR_INET), rio->sendBufferCount);
+    for (int i = 0; i < rio->sendBufferCount; ++i) {
+      RIO_BUF buffer = {0};
 
-			if (rio->sendMemory == NULL || rio->sendMemoryAddress == NULL) {
-				*error = RIOSOCKETS_ERROR_RIO_BUFFER_CREATION;
+      buffer.BufferId = sendBufferID;
+      buffer.Offset = rio->maxBufferLength * i;
+      buffer.Length = rio->maxBufferLength;
 
-				goto destroy;
-			}
+      rio->sendBuffers[i].data = buffer;
 
-			RIO_BUFFERID sendBufferID = rio->functions.RIORegisterBuffer(rio->sendMemory, rio->maxBufferLength * rio->sendBufferCount);
-			RIO_BUFFERID sendAddressBufferID = rio->functions.RIORegisterBuffer(rio->sendMemoryAddress, rio->sendBufferCount * sizeof(SOCKADDR_INET));
+      buffer.BufferId = sendAddressBufferID;
+      buffer.Offset = sizeof(SOCKADDR_INET) * i;
+      buffer.Length = sizeof(SOCKADDR_INET);
 
-			if (sendBufferID == RIO_INVALID_BUFFERID || sendAddressBufferID == RIO_INVALID_BUFFERID) {
-				*error = RIOSOCKETS_ERROR_RIO_BUFFER_REGISTRATION;
+      rio->sendBuffers[i].address = buffer;
+    }
 
-				goto destroy;
-			}
+    rio->receiveMemory = riosockets_buffer_allocate(rio->maxBufferLength,
+                                                    rio->receiveBufferCount);
+    rio->receiveMemoryAddress = riosockets_buffer_allocate(
+        sizeof(SOCKADDR_INET), rio->receiveBufferCount);
 
-			rio->sendBuffers = (RioBuffer*)calloc(rio->sendBufferCount, sizeof(RioBuffer));
+    if (rio->receiveMemory == NULL || rio->receiveMemoryAddress == NULL) {
+      *error = RIOSOCKETS_ERROR_RIO_BUFFER_CREATION;
 
-			for (int i = 0; i < rio->sendBufferCount; ++i) {
-				RIO_BUF buffer = { 0 };
+      goto destroy;
+    }
 
-				buffer.BufferId = sendBufferID;
-				buffer.Offset = rio->maxBufferLength * i;
-				buffer.Length = rio->maxBufferLength;
+    RIO_BUFFERID receiveBufferID = rio->functions.RIORegisterBuffer(
+        rio->receiveMemory, rio->maxBufferLength * rio->receiveBufferCount);
+    RIO_BUFFERID receiveAddressBufferID = rio->functions.RIORegisterBuffer(
+        rio->receiveMemoryAddress,
+        rio->receiveBufferCount * sizeof(SOCKADDR_INET));
 
-				rio->sendBuffers[i].data = buffer;
+    if (receiveBufferID == RIO_INVALID_BUFFERID ||
+        receiveAddressBufferID == RIO_INVALID_BUFFERID) {
+      *error = RIOSOCKETS_ERROR_RIO_BUFFER_REGISTRATION;
 
-				buffer.BufferId = sendAddressBufferID;
-				buffer.Offset = sizeof(SOCKADDR_INET) * i;
-				buffer.Length = sizeof(SOCKADDR_INET);
+      goto destroy;
+    }
 
-				rio->sendBuffers[i].address = buffer;
-			}
+    rio->receiveBuffers =
+        (RioBuffer*)calloc(rio->receiveBufferCount, sizeof(RioBuffer));
 
-			rio->receiveMemory = riosockets_buffer_allocate(rio->maxBufferLength, rio->receiveBufferCount);
-			rio->receiveMemoryAddress = riosockets_buffer_allocate(sizeof(SOCKADDR_INET), rio->receiveBufferCount);
+    for (int i = 0; i < rio->receiveBufferCount; ++i) {
+      RIO_BUF buffer = {0};
 
-			if (rio->receiveMemory == NULL || rio->receiveMemoryAddress == NULL) {
-				*error = RIOSOCKETS_ERROR_RIO_BUFFER_CREATION;
+      buffer.BufferId = receiveBufferID;
+      buffer.Offset = rio->maxBufferLength * i;
+      buffer.Length = rio->maxBufferLength;
 
-				goto destroy;
-			}
+      rio->receiveBuffers[i].data = buffer;
 
-			RIO_BUFFERID receiveBufferID = rio->functions.RIORegisterBuffer(rio->receiveMemory, rio->maxBufferLength * rio->receiveBufferCount);
-			RIO_BUFFERID receiveAddressBufferID = rio->functions.RIORegisterBuffer(rio->receiveMemoryAddress, rio->receiveBufferCount * sizeof(SOCKADDR_INET));
+      buffer.BufferId = receiveAddressBufferID;
+      buffer.Offset = sizeof(SOCKADDR_INET) * i;
+      buffer.Length = sizeof(SOCKADDR_INET);
 
-			if (receiveBufferID == RIO_INVALID_BUFFERID || receiveAddressBufferID == RIO_INVALID_BUFFERID) {
-				*error = RIOSOCKETS_ERROR_RIO_BUFFER_REGISTRATION;
+      rio->receiveBuffers[i].address = buffer;
 
-				goto destroy;
-			}
+      if (!rio->functions.RIOReceiveEx(
+              rio->requestQueue, &rio->receiveBuffers[i].data, 1, NULL,
+              &rio->receiveBuffers[i].address, NULL, NULL, 0, 0)) {
+        *error = RIOSOCKETS_ERROR_RIO_BUFFER_ASSOCIATION;
 
-			rio->receiveBuffers = (RioBuffer*)calloc(rio->receiveBufferCount, sizeof(RioBuffer));
+        goto destroy;
+      }
+    }
 
-			for (int i = 0; i < rio->receiveBufferCount; ++i) {
-				RIO_BUF buffer = { 0 };
+    goto create;
 
-				buffer.BufferId = receiveBufferID;
-				buffer.Offset = rio->maxBufferLength * i;
-				buffer.Length = rio->maxBufferLength;
+  destroy:
 
-				rio->receiveBuffers[i].data = buffer;
+    riosockets_destroy((RioSocket*)&rio);
 
-				buffer.BufferId = receiveAddressBufferID;
-				buffer.Offset = sizeof(SOCKADDR_INET) * i;
-				buffer.Length = sizeof(SOCKADDR_INET);
+    return -1;
+  } else {
+    *error = RIOSOCKETS_ERROR_SOCKET_CREATION;
 
-				rio->receiveBuffers[i].address = buffer;
+    return -1;
+  }
 
-				if (!rio->functions.RIOReceiveEx(rio->requestQueue, &rio->receiveBuffers[i].data, 1, NULL, &rio->receiveBuffers[i].address, NULL, NULL, 0, 0)) {
-					*error = RIOSOCKETS_ERROR_RIO_BUFFER_ASSOCIATION;
+create:
 
-					goto destroy;
-				}
-			}
+  return (RioSocket)rio;
+}
 
-			goto create;
+void riosockets_destroy(RioSocket* socket) {
+  Rio* rio = (Rio*)*socket;
 
-			destroy:
+  if (rio->socket > 0) {
+    rio->functions.RIODeregisterBuffer(rio->sendBuffers[0].data.BufferId);
+    rio->functions.RIODeregisterBuffer(rio->sendBuffers[0].address.BufferId);
+    rio->functions.RIODeregisterBuffer(rio->receiveBuffers[0].data.BufferId);
+    rio->functions.RIODeregisterBuffer(rio->receiveBuffers[0].address.BufferId);
 
-			riosockets_destroy((RioSocket*)&rio);
+    rio->functions.RIOCloseCompletionQueue(rio->sendQueue);
+    rio->functions.RIOCloseCompletionQueue(rio->receiveQueue);
 
-			return -1;
-		} else {
-			*error = RIOSOCKETS_ERROR_SOCKET_CREATION;
+    WSACloseEvent(rio->sendEvent);
+    WSACloseEvent(rio->receiveEvent);
 
-			return -1;
-		}
+    closesocket(rio->socket);
 
-		create:
+    riosockets_buffer_free(rio->sendMemory);
+    riosockets_buffer_free(rio->sendMemoryAddress);
+    riosockets_buffer_free(rio->receiveMemory);
+    riosockets_buffer_free(rio->receiveMemoryAddress);
 
-		return (RioSocket)rio;
-	}
+    free(rio->sendBuffers);
+    free(rio->receiveBuffers);
+    free(rio->sendCompletionResults);
+    free(rio->receiveCompletionResults);
 
-	void riosockets_destroy(RioSocket* socket) {
-		Rio* rio = (Rio*)*socket;
+    free(rio);
 
-		if (rio->socket > 0) {
-			rio->functions.RIODeregisterBuffer(rio->sendBuffers[0].data.BufferId);
-			rio->functions.RIODeregisterBuffer(rio->sendBuffers[0].address.BufferId);
-			rio->functions.RIODeregisterBuffer(rio->receiveBuffers[0].data.BufferId);
-			rio->functions.RIODeregisterBuffer(rio->receiveBuffers[0].address.BufferId);
+    *socket = 0;
+  }
+}
 
-			rio->functions.RIOCloseCompletionQueue(rio->sendQueue);
-			rio->functions.RIOCloseCompletionQueue(rio->receiveQueue);
+int riosockets_bind(RioSocket socket, const RioAddress* address) {
+  Rio* rio = (Rio*)socket;
 
-			WSACloseEvent(rio->sendEvent);
-			WSACloseEvent(rio->receiveEvent);
+  if (rio->socket < 1) return -1;
 
-			closesocket(rio->socket);
+  struct sockaddr_in6 socketAddress = {0};
 
-			riosockets_buffer_free(rio->sendMemory);
-			riosockets_buffer_free(rio->sendMemoryAddress);
-			riosockets_buffer_free(rio->receiveMemory);
-			riosockets_buffer_free(rio->receiveMemoryAddress);
+  socketAddress.sin6_family = AF_INET6;
 
-			free(rio->sendBuffers);
-			free(rio->receiveBuffers);
-			free(rio->sendCompletionResults);
-			free(rio->receiveCompletionResults);
+  if (address == NULL) {
+    socketAddress.sin6_addr = in6addr_any;
+    socketAddress.sin6_port = 0;
+  } else {
+    socketAddress.sin6_addr = address->ipv6;
+    socketAddress.sin6_port = RIOSOCKETS_HOST_TO_NET_16(address->port);
+  }
 
-			free(rio);
+  return bind(rio->socket, (struct sockaddr*)&socketAddress,
+              sizeof(socketAddress));
+}
 
-			*socket = 0;
-		}
-	}
+int riosockets_connect(RioSocket socket, const RioAddress* address) {
+  Rio* rio = (Rio*)socket;
 
-	int riosockets_bind(RioSocket socket, const RioAddress* address) {
-		Rio* rio = (Rio*)socket;
+  if (rio->socket < 1) return -1;
 
-		if (rio->socket < 1)
-			return -1;
+  struct sockaddr_in6 socketAddress = {0};
 
-		struct sockaddr_in6 socketAddress = { 0 };
+  socketAddress.sin6_family = AF_INET6;
+  socketAddress.sin6_addr = address->ipv6;
+  socketAddress.sin6_port = RIOSOCKETS_HOST_TO_NET_16(address->port);
 
-		socketAddress.sin6_family = AF_INET6;
+  return connect(rio->socket, (struct sockaddr*)&socketAddress,
+                 sizeof(socketAddress));
+}
 
-		if (address == NULL) {
-			socketAddress.sin6_addr = in6addr_any;
-			socketAddress.sin6_port = 0;
-		} else {
-			socketAddress.sin6_addr = address->ipv6;
-			socketAddress.sin6_port = RIOSOCKETS_HOST_TO_NET_16(address->port);
-		}
+RioStatus riosockets_set_option(RioSocket socket, int level, int optionName,
+                                const int* optionValue, int optionLength) {
+  Rio* rio = (Rio*)socket;
 
-		return bind(rio->socket, (struct sockaddr*)&socketAddress, sizeof(socketAddress));
-	}
+  if (rio->socket > 0 &&
+      setsockopt(rio->socket, level, optionName, (const char*)optionValue,
+                 optionLength) == 0)
+    return RIOSOCKETS_STATUS_OK;
+  else
+    return RIOSOCKETS_STATUS_ERROR;
+}
 
-	int riosockets_connect(RioSocket socket, const RioAddress* address) {
-		Rio* rio = (Rio*)socket;
+RioStatus riosockets_get_option(RioSocket socket, int level, int optionName,
+                                int* optionValue, int* optionLength) {
+  Rio* rio = (Rio*)socket;
 
-		if (rio->socket < 1)
-			return -1;
+  if (rio->socket > 0 &&
+      getsockopt(rio->socket, level, optionName, (char*)optionValue,
+                 (socklen_t*)optionLength) == 0)
+    return RIOSOCKETS_STATUS_OK;
+  else
+    return RIOSOCKETS_STATUS_ERROR;
+}
 
-		struct sockaddr_in6 socketAddress = { 0 };
+uint8_t* riosockets_buffer(RioSocket socket, const RioAddress* address,
+                           int dataLength) {
+  Rio* rio = (Rio*)socket;
 
-		socketAddress.sin6_family = AF_INET6;
-		socketAddress.sin6_addr = address->ipv6;
-		socketAddress.sin6_port = RIOSOCKETS_HOST_TO_NET_16(address->port);
+  if (rio->socket < 1 || rio->sendBufferPending == rio->sendBufferCount ||
+      dataLength > rio->maxBufferLength)
+    return NULL;
 
-		return connect(rio->socket, (struct sockaddr*)&socketAddress, sizeof(socketAddress));
-	}
+  if (rio->sendBufferTail == rio->sendBufferCount) rio->sendBufferTail = 0;
 
-	RioStatus riosockets_set_option(RioSocket socket, int level, int optionName, const int* optionValue, int optionLength) {
-		Rio* rio = (Rio*)socket;
+  uint8_t* buffer =
+      (uint8_t*)(rio->sendMemory + rio->sendBufferTail * rio->maxBufferLength);
 
-		if (rio->socket > 0 && setsockopt(rio->socket, level, optionName, (const char*)optionValue, optionLength) == 0)
-			return RIOSOCKETS_STATUS_OK;
-		else
-			return RIOSOCKETS_STATUS_ERROR;
-	}
+  rio->sendBuffers[rio->sendBufferTail].data.Length = dataLength;
 
-	RioStatus riosockets_get_option(RioSocket socket, int level, int optionName, int* optionValue, int* optionLength) {
-		Rio* rio = (Rio*)socket;
+  if (address == NULL) {
+    rio->sendBuffers[rio->sendBufferTail].addressless = TRUE;
+  } else {
+    struct sockaddr_in6 socketAddress = {0};
 
-		if (rio->socket > 0 && getsockopt(rio->socket, level, optionName, (char*)optionValue, (socklen_t*)optionLength) == 0)
-			return RIOSOCKETS_STATUS_OK;
-		else
-			return RIOSOCKETS_STATUS_ERROR;
-	}
+    socketAddress.sin6_family = AF_INET6;
+    socketAddress.sin6_addr = address->ipv6;
+    socketAddress.sin6_port = RIOSOCKETS_HOST_TO_NET_16(address->port);
 
-	uint8_t* riosockets_buffer(RioSocket socket, const RioAddress* address, int dataLength) {
-		Rio* rio = (Rio*)socket;
+    struct sockaddr_in6* destinationAddress =
+        (struct sockaddr_in6*)(rio->sendMemoryAddress +
+                               rio->sendBufferTail * sizeof(SOCKADDR_INET));
 
-		if (rio->socket < 1 || rio->sendBufferPending == rio->sendBufferCount || dataLength > rio->maxBufferLength)
-			return NULL;
+    *destinationAddress = socketAddress;
 
-		if (rio->sendBufferTail == rio->sendBufferCount)
-			rio->sendBufferTail = 0;
+    rio->sendBuffers[rio->sendBufferTail].addressless = FALSE;
+  }
 
-		uint8_t* buffer = (uint8_t*)(rio->sendMemory + rio->sendBufferTail * rio->maxBufferLength);
+  ++rio->sendBufferQueue;
+  ++rio->sendBufferTail;
 
-		rio->sendBuffers[rio->sendBufferTail].data.Length = dataLength;
+  return buffer;
+}
 
-		if (address == NULL) {
-			rio->sendBuffers[rio->sendBufferTail].addressless = TRUE;
-		} else {
-			struct sockaddr_in6 socketAddress = { 0 };
+void riosockets_send(RioSocket socket) {
+  Rio* rio = (Rio*)socket;
 
-			socketAddress.sin6_family = AF_INET6;
-			socketAddress.sin6_addr = address->ipv6;
-			socketAddress.sin6_port = RIOSOCKETS_HOST_TO_NET_16(address->port);
+  if (rio->socket > 0) {
+    while (rio->sendBufferQueue != 0) {
+      int sendBufferHead = rio->sendBufferTail - rio->sendBufferQueue;
+      BOOL addressless = rio->sendBuffers[sendBufferHead].addressless;
 
-			struct sockaddr_in6* destinationAddress = (struct sockaddr_in6*)(rio->sendMemoryAddress + rio->sendBufferTail * sizeof(SOCKADDR_INET));
+      if (!rio->functions.RIOSendEx(
+              rio->requestQueue, &rio->sendBuffers[sendBufferHead].data, 1,
+              NULL,
+              (addressless == FALSE ? &rio->sendBuffers[sendBufferHead].address
+                                    : NULL),
+              NULL, NULL, 0, 0)) {
+        RioAddress address = {0};
 
-			*destinationAddress = socketAddress;
+        if (addressless == FALSE)
+          riosockets_address_extract(
+              &address, (struct sockaddr_storage*)(rio->sendMemoryAddress +
+                                                   sendBufferHead *
+                                                       sizeof(SOCKADDR_INET)));
 
-			rio->sendBuffers[rio->sendBufferTail].addressless = FALSE;
-		}
+        rio->callback(socket, (addressless == FALSE ? &address : NULL),
+                      (const uint8_t*)(rio->sendMemory +
+                                       sendBufferHead * rio->maxBufferLength),
+                      rio->sendBuffers[sendBufferHead].data.Length,
+                      RIOSOCKETS_TYPE_SEND);
+      } else {
+        ++rio->sendBufferPending;
+      }
 
-		++rio->sendBufferQueue;
-		++rio->sendBufferTail;
+      --rio->sendBufferQueue;
+    }
 
-		return buffer;
-	}
+    int completionCount = rio->functions.RIODequeueCompletion(
+        rio->sendQueue, rio->sendCompletionResults, rio->sendBufferCount);
 
-	void riosockets_send(RioSocket socket) {
-		Rio* rio = (Rio*)socket;
+    rio->sendBufferPending -= completionCount;
+  }
+}
 
-		if (rio->socket > 0) {
-			while (rio->sendBufferQueue != 0) {
-				int sendBufferHead = rio->sendBufferTail - rio->sendBufferQueue;
-				BOOL addressless = rio->sendBuffers[sendBufferHead].addressless;
+void riosockets_receive(RioSocket socket, int maxCompletions) {
+  Rio* rio = (Rio*)socket;
 
-				if (!rio->functions.RIOSendEx(rio->requestQueue, &rio->sendBuffers[sendBufferHead].data, 1, NULL, (addressless == FALSE ? &rio->sendBuffers[sendBufferHead].address : NULL), NULL, NULL, 0, 0)) {
-					RioAddress address = { 0 };
+  if (rio->socket > 0 && maxCompletions > 0) {
+    if (maxCompletions > RIOSOCKETS_MAX_COMPLETION_RESULTS)
+      maxCompletions = RIOSOCKETS_MAX_COMPLETION_RESULTS;
 
-					if (addressless == FALSE)
-						riosockets_address_extract(&address, (struct sockaddr_storage*)(rio->sendMemoryAddress + sendBufferHead * sizeof(SOCKADDR_INET)));
+    int completionCount = rio->functions.RIODequeueCompletion(
+        rio->receiveQueue, rio->receiveCompletionResults, maxCompletions);
 
-					rio->callback(socket, (addressless == FALSE ? &address : NULL), (const uint8_t*)(rio->sendMemory + sendBufferHead * rio->maxBufferLength), rio->sendBuffers[sendBufferHead].data.Length, RIOSOCKETS_TYPE_SEND);
-				} else {
-					++rio->sendBufferPending;
-				}
+    if (completionCount > 0) {
+      for (int i = 0; i < completionCount; i++) {
+        RioAddress address = {0};
 
-				--rio->sendBufferQueue;
-			}
+        riosockets_address_extract(
+            &address, (struct sockaddr_storage*)(rio->receiveMemoryAddress +
+                                                 rio->receiveBufferHead *
+                                                     sizeof(SOCKADDR_INET)));
 
-			int completionCount = rio->functions.RIODequeueCompletion(rio->sendQueue, rio->sendCompletionResults, rio->sendBufferCount);
+        rio->callback(
+            socket, &address,
+            (const uint8_t*)(rio->receiveMemory +
+                             rio->receiveBufferHead * rio->maxBufferLength),
+            rio->receiveCompletionResults[i].BytesTransferred,
+            RIOSOCKETS_TYPE_RECEIVE);
+        rio->functions.RIOReceiveEx(
+            rio->requestQueue,
+            &rio->receiveBuffers[rio->receiveBufferHead].data, 1, NULL,
+            &rio->receiveBuffers[rio->receiveBufferHead].address, NULL, NULL, 0,
+            0);
 
-			rio->sendBufferPending -= completionCount;
-		}
-	}
+        ++rio->receiveBufferHead;
 
-	void riosockets_receive(RioSocket socket, int maxCompletions) {
-		Rio* rio = (Rio*)socket;
+        if (rio->receiveBufferHead == rio->receiveBufferCount)
+          rio->receiveBufferHead = 0;
+      }
+    }
+  }
+}
 
-		if (rio->socket > 0 && maxCompletions > 0) {
-			if (maxCompletions > RIOSOCKETS_MAX_COMPLETION_RESULTS)
-				maxCompletions = RIOSOCKETS_MAX_COMPLETION_RESULTS;
+RioStatus riosockets_address_get(RioSocket socket, RioAddress* address) {
+  Rio* rio = (Rio*)socket;
 
-			int completionCount = rio->functions.RIODequeueCompletion(rio->receiveQueue, rio->receiveCompletionResults, maxCompletions);
+  if (rio->socket < 1) return RIOSOCKETS_STATUS_ERROR;
 
-			if (completionCount > 0) {
-				for (int i = 0; i < completionCount; i++) {
-					RioAddress address = { 0 };
+  struct sockaddr_storage addressStorage = {0};
+  socklen_t addressLength = sizeof(addressStorage);
 
-					riosockets_address_extract(&address, (struct sockaddr_storage*)(rio->receiveMemoryAddress + rio->receiveBufferHead * sizeof(SOCKADDR_INET)));
+  if (getsockname(rio->socket, (struct sockaddr*)&addressStorage,
+                  &addressLength) == -1)
+    return RIOSOCKETS_STATUS_ERROR;
 
-					rio->callback(socket, &address, (const uint8_t*)(rio->receiveMemory + rio->receiveBufferHead * rio->maxBufferLength), rio->receiveCompletionResults[i].BytesTransferred, RIOSOCKETS_TYPE_RECEIVE);
-					rio->functions.RIOReceiveEx(rio->requestQueue, &rio->receiveBuffers[rio->receiveBufferHead].data, 1, NULL, &rio->receiveBuffers[rio->receiveBufferHead].address, NULL, NULL, 0, 0);
+  riosockets_address_extract(address, &addressStorage);
 
-					++rio->receiveBufferHead;
+  return RIOSOCKETS_STATUS_OK;
+}
 
-					if (rio->receiveBufferHead == rio->receiveBufferCount)
-						rio->receiveBufferHead = 0;
-				}
-			}
-		}
-	}
+RioStatus riosockets_address_is_equal(const RioAddress* left,
+                                      const RioAddress* right) {
+  if (memcmp(left, right, sizeof(struct in6_addr)) == 0 &&
+      left->port == right->port)
+    return RIOSOCKETS_STATUS_OK;
+  else
+    return RIOSOCKETS_STATUS_ERROR;
+}
 
-	RioStatus riosockets_address_get(RioSocket socket, RioAddress* address) {
-		Rio* rio = (Rio*)socket;
+RioStatus riosockets_address_set_ip(RioAddress* address, const char* ip) {
+  int type = AF_INET6;
+  void* destination = &address->ipv6;
 
-		if (rio->socket < 1)
-			return RIOSOCKETS_STATUS_ERROR;
+  if (strchr(ip, ':') == NULL) {
+    type = AF_INET;
 
-		struct sockaddr_storage addressStorage = { 0 };
-		socklen_t addressLength = sizeof(addressStorage);
+    memset(address, 0, sizeof(address->ipv4.zeros));
 
-		if (getsockname(rio->socket, (struct sockaddr*)&addressStorage, &addressLength) == -1)
-			return RIOSOCKETS_STATUS_ERROR;
+    address->ipv4.ffff = 0xFFFF;
+    destination = &address->ipv4.ip;
+  }
 
-		riosockets_address_extract(address, &addressStorage);
+  if (!inet_pton(type, ip, destination)) return RIOSOCKETS_STATUS_ERROR;
 
-		return RIOSOCKETS_STATUS_OK;
-	}
+  return RIOSOCKETS_STATUS_OK;
+}
 
-	RioStatus riosockets_address_is_equal(const RioAddress* left, const RioAddress* right) {
-		if (memcmp(left, right, sizeof(struct in6_addr)) == 0 && left->port == right->port)
-			return RIOSOCKETS_STATUS_OK;
-		else
-			return RIOSOCKETS_STATUS_ERROR;
-	}
+RioStatus riosockets_address_get_ip(const RioAddress* address, char* ip,
+                                    int ipLength) {
+  if (address->ipv4.ffff == 0xFFFF &&
+      riosockets_array_is_zeroed(address->ipv4.zeros,
+                                 sizeof(address->ipv4.zeros)) == 0) {
+    if (inet_ntop(AF_INET, &address->ipv4.ip, ip, ipLength) == NULL)
+      return RIOSOCKETS_STATUS_ERROR;
+  } else if (inet_ntop(AF_INET6, &address->ipv6, ip, ipLength) == NULL) {
+    return RIOSOCKETS_STATUS_ERROR;
+  }
 
-	RioStatus riosockets_address_set_ip(RioAddress* address, const char* ip) {
-		int type = AF_INET6;
-		void* destination = &address->ipv6;
+  return RIOSOCKETS_STATUS_OK;
+}
 
-		if (strchr(ip, ':') == NULL) {
-			type = AF_INET;
+RioStatus riosockets_address_set_hostname(RioAddress* address,
+                                          const char* name) {
+  struct addrinfo addressInfo = {0}, *result = NULL, *resultList = NULL;
 
-			memset(address, 0, sizeof(address->ipv4.zeros));
+  addressInfo.ai_family = AF_UNSPEC;
 
-			address->ipv4.ffff = 0xFFFF;
-			destination = &address->ipv4.ip;
-		}
+  if (getaddrinfo(name, NULL, &addressInfo, &resultList) != 0)
+    return RIOSOCKETS_STATUS_ERROR;
 
-		if (!inet_pton(type, ip, destination))
-			return RIOSOCKETS_STATUS_ERROR;
+  for (result = resultList; result != NULL; result = result->ai_next) {
+    if (result->ai_addr != NULL &&
+        result->ai_addrlen >= sizeof(struct sockaddr_in)) {
+      if (result->ai_family == AF_INET) {
+        struct sockaddr_in* socketAddress =
+            (struct sockaddr_in*)result->ai_addr;
 
-		return RIOSOCKETS_STATUS_OK;
-	}
+        memset(address, 0, sizeof(address->ipv4.zeros));
 
-	RioStatus riosockets_address_get_ip(const RioAddress* address, char* ip, int ipLength) {
-		if (address->ipv4.ffff == 0xFFFF && riosockets_array_is_zeroed(address->ipv4.zeros, sizeof(address->ipv4.zeros)) == 0) {
-			if (inet_ntop(AF_INET, &address->ipv4.ip, ip, ipLength) == NULL)
-				return RIOSOCKETS_STATUS_ERROR;
-		} else if (inet_ntop(AF_INET6, &address->ipv6, ip, ipLength) == NULL) {
-			return RIOSOCKETS_STATUS_ERROR;
-		}
+        address->ipv4.ffff = 0xFFFF;
+        address->ipv4.ip.s_addr = socketAddress->sin_addr.s_addr;
 
-		return RIOSOCKETS_STATUS_OK;
-	}
+        freeaddrinfo(resultList);
 
-	RioStatus riosockets_address_set_hostname(RioAddress* address, const char* name) {
-		struct addrinfo addressInfo = { 0 }, *result = NULL, *resultList = NULL;
+        return RIOSOCKETS_STATUS_OK;
+      } else if (result->ai_family == AF_INET6) {
+        struct sockaddr_in6* socketAddress =
+            (struct sockaddr_in6*)result->ai_addr;
 
-		addressInfo.ai_family = AF_UNSPEC;
+        address->ipv6 = socketAddress->sin6_addr;
 
-		if (getaddrinfo(name, NULL, &addressInfo, &resultList) != 0)
-			return RIOSOCKETS_STATUS_ERROR;
+        freeaddrinfo(resultList);
 
-		for (result = resultList; result != NULL; result = result->ai_next) {
-			if (result->ai_addr != NULL && result->ai_addrlen >= sizeof(struct sockaddr_in)) {
-				if (result->ai_family == AF_INET) {
-					struct sockaddr_in* socketAddress = (struct sockaddr_in*)result->ai_addr;
+        return RIOSOCKETS_STATUS_OK;
+      }
+    }
+  }
 
-					memset(address, 0, sizeof(address->ipv4.zeros));
+  if (resultList != NULL) freeaddrinfo(resultList);
 
-					address->ipv4.ffff = 0xFFFF;
-					address->ipv4.ip.s_addr = socketAddress->sin_addr.s_addr;
+  return riosockets_address_set_ip(address, name);
+}
 
-					freeaddrinfo(resultList);
+RioStatus riosockets_address_get_hostname(const RioAddress* address, char* name,
+                                          int nameLength) {
+  struct sockaddr_in6 socketAddress = {0};
 
-					return RIOSOCKETS_STATUS_OK;
-				} else if (result->ai_family == AF_INET6) {
-					struct sockaddr_in6* socketAddress = (struct sockaddr_in6*)result->ai_addr;
+  socketAddress.sin6_family = AF_INET6;
+  socketAddress.sin6_addr = address->ipv6;
+  socketAddress.sin6_port = RIOSOCKETS_HOST_TO_NET_16(address->port);
 
-					address->ipv6 = socketAddress->sin6_addr;
+  int error =
+      getnameinfo((struct sockaddr*)&socketAddress, sizeof(socketAddress), name,
+                  nameLength, NULL, 0, NI_NAMEREQD);
 
-					freeaddrinfo(resultList);
+  if (!error) {
+    if (name != NULL && nameLength > 0 && !memchr(name, '\0', nameLength))
+      return RIOSOCKETS_STATUS_ERROR;
 
-					return RIOSOCKETS_STATUS_OK;
-				}
-			}
-		}
+    return RIOSOCKETS_STATUS_OK;
+  }
 
-		if (resultList != NULL)
-			freeaddrinfo(resultList);
+  if (error != EAI_NONAME) return RIOSOCKETS_STATUS_ERROR;
 
-		return riosockets_address_set_ip(address, name);
-	}
+  return riosockets_address_get_ip(address, name, nameLength);
+}
 
-	RioStatus riosockets_address_get_hostname(const RioAddress* address, char* name, int nameLength) {
-		struct sockaddr_in6 socketAddress = { 0 };
+#endif  // RIOSOCKETS_IMPLEMENTATION
 
-		socketAddress.sin6_family = AF_INET6;
-		socketAddress.sin6_addr = address->ipv6;
-		socketAddress.sin6_port = RIOSOCKETS_HOST_TO_NET_16(address->port);
-
-		int error = getnameinfo((struct sockaddr*)&socketAddress, sizeof(socketAddress), name, nameLength, NULL, 0, NI_NAMEREQD);
-
-		if (!error) {
-			if (name != NULL && nameLength > 0 && !memchr(name, '\0', nameLength))
-				return RIOSOCKETS_STATUS_ERROR;
-
-			return RIOSOCKETS_STATUS_OK;
-		}
-
-		if (error != EAI_NONAME)
-			return RIOSOCKETS_STATUS_ERROR;
-
-		return riosockets_address_get_ip(address, name, nameLength);
-	}
-
-#endif // RIOSOCKETS_IMPLEMENTATION
-
-#endif // RIOSOCKETS_H
+#endif  // RIOSOCKETS_H
