@@ -115,6 +115,9 @@ void server_callback(RioSocket server, const RioAddress* address,
       RioSocket client = clients[i];
       uint8_t* buffer = riosockets_buffer(client, NULL, dataLength);
       memcpy(buffer, data, dataLength);
+#if defined(_DEBUG)
+      printf("%s\n", data);
+#endif
       receive_sender_queue_size += 1;
       if (receive_sender_queue_size >= RECEIVE_SENDER_PACKET_BUFFER) {
 #if defined(_DEBUG)
